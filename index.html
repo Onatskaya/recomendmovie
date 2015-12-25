@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recomend Movie</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/sweetalert.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+      <div class="container">
+      <h1>Фильмы</h1>
+        <div class="col-xs-12 col-sm-6">
+        <h2>Порекомендуйте фильм</h2>
+          <form id="movie-feedback-form">
+            <div class="form-group">
+              <label for="filmName">Название:</label>
+              <input type="text" class="form-control" id="filmName" placeholder="Название" required>
+            </div>
+            <div class="form-group">
+              <label for="genre">Жанр:</label>
+              <input type="text" class="form-control" id="genre" placeholder="Жанр" required>
+            </div>
+            <div class="form-group">
+              <label for="year">Год:</label>
+              <input type="text" class="form-control" id="year" placeholder="Год выпуска" required>
+            </div>
+            <div class="form-group">
+              <label for="description">Описание:</label>
+              <textarea  class="form-control" rows="3" name="description" id="description" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="picture">Ссылка на картинку:</label>
+              <input type="url" class="form-control" id="picture" placeholder="Ссылка на картинку" required>
+            </div>
+            <div class="form-group">
+              <label for="userName">Ваше имя:</label>
+              <input type="text" class="form-control" id="userName" placeholder="Ваше имя" required>
+            </div>
+            <button type="button" id="submitForm" class="btn btn-success">Оставить рекомендацию</button>
+            <div><button type="button" id="btn-load-data" class="btn btn-success">Рекомендации друзей</button></div>
+          </form>
+          
+        </div>
+
+        <div class="col-xs-12 col-sm-6">
+        	<h2>Рекомендации друзей</h2>
+	        <div class="panel panel-default">
+	            <div class="panel-body" id="movie-rec">
+	            <h4></h4>
+	            </div>
+	          </div>
+	        </div>
+      </div>
+        <!-- <div class="col-xs-12 col-sm-6">
+          <h2>Рекомендации друзей</h2>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <img src="poster.png" alt="Poster" class="poster">
+              <h3>От заката до рассвета <small>(Фэнтези)</small></h3>
+              <p class="year">Год: </p>
+              <p class="description"> Описание: </p>
+              <p class="userName">Рекомендация от: </p>
+              <p class="date">Дата рекомендации: </p>
+            </div>
+          </div>
+        </div>
+              </div> -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/moviefeedback.js"></script>
+  </body>
+</html>
