@@ -37,6 +37,7 @@ $(document).ready(function(){
                 	success: function(data, textStatus) {
                 		console.debug("Successful feedback post request. Response is: ", data);
                 		swal("Спасибо, Ваш отзыв успешно сохранен");
+                        var recomTime = new Date();
                 	},
                 	error: function(response, status){
                 		console.error("Error while feedback post. Response is: ", response );
@@ -58,10 +59,30 @@ $(document).ready(function(){
                 		console.debug("Successful feedback post request. Response is: ", data);
                 		var recomandation= data.results;
                 		for (var i = 0; i < recomandation.length; i++) {
-                			var movieTitle = $("<h4></h4>");
+                			var movieTitle = $("<h3></h3>");
+                            var movieGenre = $("<small> </small>");
+                            var movieYear = $("<p></p>");
+                            var movieDescription = $("<p></p>");
+                            var moviePoster = $('<img src="" alt="Poster" class="poster">');
+                            var movieRecomendator = $("<p></p>");
+                            var recomendationTime = $("<p></p>");
                 			
-                			$("#movie-rec").append(movieTitle);
+                            $(".movie-rec .panel-body").append(moviePoster);
+                            moviePoster.attr("src", recomandation[i].imgUrl);
+                			$(".movie-rec .panel-body").append(movieTitle);
                             movieTitle.html(recomandation[i].title);
+                            movieTitle.append(movieGenre);
+                            movieGenre.html(" (" + recomandation[i].genre + ")");
+                            $(".movie-rec .panel-body").append(movieYear);
+                            movieYear.html("Год выпуска: " + recomandation[i].year);
+                            $(".movie-rec .panel-body").append(movieDescription);
+                            movieDescription.html(recomandation[i].description);
+                            $(".movie-rec .panel-body").append(movieRecomendator);
+                            movieRecomendator.html("Автор рекомендации: " + recomandation[i].postAuthor);
+                            $(".movie-rec .panel-body").append(recomendationTime);
+                            recomendationTime.html("Рекомендация оставлена: " + recomandation[i].recomTime);
+
+
                 		}
                 	},
                 	error: function(response, status){
