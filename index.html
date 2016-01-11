@@ -24,28 +24,38 @@
         <h2>Порекомендуйте фильм</h2>
           <form id="movie-feedback-form">
             <div class="form-group">
-              <label for="filmName">Название:</label>
+              <label class="control-label" for="filmName">Название:</label>
               <input type="text" class="form-control" id="filmName" placeholder="Название" required>
+              <span id="helpBlock" class="help-block">Название фильма указано некорректно</span>
+
             </div>
             <div class="form-group">
-              <label for="genre">Жанр:</label>
+              <label class="control-label" for="genre">Жанр:</label>
               <input type="text" class="form-control" id="genre" placeholder="Жанр" required>
+              <span id="helpBlock1" class="help-block">Жанр фильма указан некорректно</span>
+
             </div>
             <div class="form-group">
-              <label for="year">Год:</label>
+              <label class="control-label" for="year">Год:</label>
               <input type="text" class="form-control" id="year" placeholder="Год выпуска" required>
+              <span id="helpBlock2" class="help-block">Год выпуска фильма указан некорректно</span>
+
             </div>
             <div class="form-group">
-              <label for="description">Описание:</label>
+              <label class="control-label" for="description">Описание:</label>
               <textarea  class="form-control" rows="3" name="description" id="description" required></textarea>
             </div>
             <div class="form-group">
-              <label for="picture">Ссылка на картинку:</label>
+              <label class="control-label" for="picture">Ссылка на картинку:</label>
               <input type="url" class="form-control" id="picture" placeholder="Ссылка на картинку" required>
+              <span id="helpBlock3" class="help-block">Введена некорректная ссылка</span>
+
             </div>
             <div class="form-group">
-              <label for="userName">Ваше имя:</label>
+              <label class="control-label" for="userName">Ваше имя:</label>
               <input type="text" class="form-control" id="userName" placeholder="Ваше имя" required>
+              <span id="helpBlock4" class="help-block">Введите Ваше имя</span>
+
             </div>
             <button type="button" id="submitForm" class="btn btn-success">Оставить рекомендацию</button>
             <div><button type="button" id="btn-load-data" class="btn btn-success">Рекомендации друзей</button></div>
@@ -57,7 +67,7 @@
         	<h2>Рекомендации друзей</h2>
 	        <div class="panel panel-default movie-rec">
 	            <div class="panel-body ">
-                
+
 	            </div>
 	          </div>
 	        </div>
@@ -79,6 +89,8 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
+
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.js"></script>
     <script src="js/sweetalert.min.js"></script>

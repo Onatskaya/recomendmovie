@@ -14,36 +14,40 @@ $(document).ready(function(){
 
 				event.preventDefault();
 				console.log("Form submiting is started");
-				var formData = {
-                    title: $("#filmName").val(),
-                    genre: $("#genre").val(),
-                    year: $("#year").val(),
-                    description: $("#description").val(),
-                    imgUrl: $("#picture").val(),
-                    postAuthor: $("#userName").val()
-                };
-                console.log("Going to post following data", formData);
+                if(movieFeedback.validateForm() == true) {
+    				var formData = {
+                        title: $("#filmName").val(),
+                        genre: $("#genre").val(),
+                        year: $("#year").val(),
+                        description: $("#description").val(),
+                        imgUrl: $("#picture").val(),
+                        postAuthor: $("#userName").val()
+                    };
+                    console.log("Going to post following data", formData);
 
-                $.ajax({
-                	url: movieFeedback.apiHost + "/classes/Movie",
-                	method: "POST",
+                    $.ajax({
+                    	url: movieFeedback.apiHost + "/classes/Movie",
+                    	method: "POST",
 
-                	headers: {
-                		"X-Parse-Application-Id": movieFeedback.apiAppId,
-                		"X-Parse-JavaScript-Key": movieFeedback.apiJSId
-                	},
-                	contentType: "application/json",
-                	data: JSON.stringify(formData),
-                	success: function(data, textStatus) {
-                		console.debug("Successful feedback post request. Response is: ", data);
-                		swal("Спасибо, Ваш отзыв успешно сохранен");
-                        var recomTime = new Date();
-                	},
-                	error: function(response, status){
-                		console.error("Error while feedback post. Response is: ", response );
-                		swal("Упс! Произошла ошибка. Проверьте консоль.");
-                	}
-                });
+                    	headers: {
+                    		"X-Parse-Application-Id": movieFeedback.apiAppId,
+                    		"X-Parse-JavaScript-Key": movieFeedback.apiJSId
+                    	},
+                    	contentType: "application/json",
+                    	data: JSON.stringify(formData),
+                    	success: function(data, textStatus) {
+                    		console.debug("Successful feedback post request. Response is: ", data);
+                    		swal("Спасибо, Ваш отзыв успешно сохранен");
+                            var recomTime = new Date();
+                    	},
+                    	error: function(response, status){
+                    		console.error("Error while feedback post. Response is: ", response );
+                    		swal("Упс! Произошла ошибка. Проверьте консоль.");
+                    	}
+                    });
+                } else {
+                    alert("Форма не валидна");
+                }
             });
             $("#btn-load-data").click(function(event) {
             	console.info("Going to get some data from API server");
@@ -90,7 +94,82 @@ $(document).ready(function(){
                 	}
             	})
             });
-		}
+		},
+        validateForm: function(){
+            console.log("Performing validation");
+
+            var titleValidation, genreValidation, yearValidation, urlValidation, autorValidation;
+            var titleInput = $("#filmName");
+            var genreInput = $("#genre");
+            var yearInput =  $("#year");
+            var urlInput = $("#picture");
+            var autorInput = $("#UserName");
+
+            var title = titleInput.val();
+            var genre = genreInput.val();
+            var year = yearInput.val();
+            var imgUrl = urlInput.val();
+            var autor = autorInput.val();
+
+
+
+            if (title.length > 2) {
+                titleInput.parent().addClass("has-success").removeClass("has-error");
+                titleValidation = true;
+            } else {
+                titleInput.parent().addClass("has-error").removeClass("has-success");
+                titleValidation = false;
+            }  
+            if (genre.length > 2) {
+                genreInput.parent().addClass("has-success").removeClass("has-error");
+                genreValidation = true;
+            } else {
+                genreInput.parent().addClass("has-error").removeClass("has-success");
+                genreValidation = false;
+            }
+
+            year = parseInt(year, 10);
+
+            if (Number.isInteger(year)) {
+
+                if (year > 1900 && year <= moment().year()){
+                yearInput.parent().addClass("has-success").removeClass("has-error");
+                yearValidation = true;
+                } else {
+                    yearInput.parent().addClass("has-error").removeClass("has-success");
+                    yearValidation = false;
+                }
+            } else {
+                yearInput.parent().addClass("has-error").removeClass("has-success");
+                yearValidation = false;
+            }
+
+            if (imgUrl.substr(0, 8) == "https://" || imgUrl.substr(0, 7) == "http://") {
+                urlInput.parent().addClass("has-success").removeClass("has-error");
+                urlValidation = true;
+            } else {
+                urlInput.parent().addClass("has-error").removeClass("has-success");
+                urlValidation = false;
+            }
+            if (autor.length > 2) {
+                autorInput.parent().addClass("has-success").removeClass("has-error");
+                autorValidation = true;
+            } else {
+                autorInput.parent().addClass("has-error").removeClass("has-success");
+                autorValidation = false;
+            }
+
+
+
+
+
+
+            if (titleValidation == true && genreValidation == true && yearValidation == true && urlValidation == true && autorValidation == true){
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 	movieFeedback.init();
 });

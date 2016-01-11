@@ -7,3 +7,6 @@
 	margin: auto;
 	max-width: 100%;
 }
+.help-block{
+	display: none;
+}
