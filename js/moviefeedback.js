@@ -63,6 +63,8 @@ $(document).ready(function(){
                 		console.debug("Successful feedback post request. Response is: ", data);
                 		var recomandation= data.results;
                 		for (var i = 0; i < recomandation.length; i++) {
+
+
                 			var movieTitle = $("<h3></h3>");
                             var movieGenre = $("<small> </small>");
                             var movieYear = $("<p></p>");
@@ -71,22 +73,20 @@ $(document).ready(function(){
                             var movieRecomendator = $("<p></p>");
                             var recomendationTime = $("<p></p>");
                 			
-                            $(".movie-rec .panel-body").append(moviePoster);
+                            $(".friendsRecomendations").append('<div class="panel panel-default movie-rec"></div>');
+                            $(".movie-rec").append('<div class="panel-body"></div>');
+
+
+
                             moviePoster.attr("src", recomandation[i].imgUrl);
-                			$(".movie-rec .panel-body").append(movieTitle);
                             movieTitle.html(recomandation[i].title);
-                            movieTitle.append(movieGenre);
                             movieGenre.html(" (" + recomandation[i].genre + ")");
-                            $(".movie-rec .panel-body").append(movieYear);
                             movieYear.html("Год выпуска: " + recomandation[i].year);
-                            $(".movie-rec .panel-body").append(movieDescription);
                             movieDescription.html(recomandation[i].description);
-                            $(".movie-rec .panel-body").append(movieRecomendator);
                             movieRecomendator.html("Автор рекомендации: " + recomandation[i].postAuthor);
-                            $(".movie-rec .panel-body").append(recomendationTime);
                             recomendationTime.html("Рекомендация оставлена: " + recomandation[i].recomTime);
 
-
+                            $(".movie-rec > .panel-body").append(moviePoster, movieTitle, movieGenre, movieYear, movieDescription, movieRecomendator, recomendationTime);
                 		}
                 	},
                 	error: function(response, status){
