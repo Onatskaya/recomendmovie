@@ -38,7 +38,6 @@ $(document).ready(function(){
                     	success: function(data, textStatus) {
                     		console.debug("Successful feedback post request. Response is: ", data);
                     		swal("Спасибо, Ваш отзыв успешно сохранен");
-                            var recomTime = new Date();
                     	},
                     	error: function(response, status){
                     		console.error("Error while feedback post. Response is: ", response );
@@ -46,7 +45,7 @@ $(document).ready(function(){
                     	}
                     });
                 } else {
-                    alert("Форма не валидна");
+                    swal("Форма не валидна");
                 }
             });
             $("#btn-load-data").click(function(event) {
@@ -74,25 +73,29 @@ $(document).ready(function(){
                             var recomendationTime = $("<p></p>");
                 			
                             $(".friendsRecomendations").append('<div class="panel panel-default movie-rec"></div>');
-                            $(".movie-rec").append('<div class="panel-body"></div>');
+                            $(".movie-rec:last-child").append('<div class="panel-body"></div>');
 
 
 
                             moviePoster.attr("src", recomandation[i].imgUrl);
-                            movieTitle.html(recomandation[i].title);
-                            movieGenre.html(" (" + recomandation[i].genre + ")");
+                            movieTitle.html(recomandation[i].title + " (" + recomandation[i].genre + ")");
+                            //movieGenre.html(" (" + recomandation[i].genre + ")");
                             movieYear.html("Год выпуска: " + recomandation[i].year);
                             movieDescription.html(recomandation[i].description);
                             movieRecomendator.html("Автор рекомендации: " + recomandation[i].postAuthor);
-                            recomendationTime.html("Рекомендация оставлена: " + recomandation[i].recomTime);
+                            recomendationTime.html("Рекомендация оставлена: " + recomandation[i].createdAt);
 
-                            $(".movie-rec > .panel-body").append(moviePoster, movieTitle, movieGenre, movieYear, movieDescription, movieRecomendator, recomendationTime);
+                            $(".movie-rec:last-child > .panel-body").append(moviePoster, movieTitle, movieGenre, movieYear, movieDescription, movieRecomendator, recomendationTime);
                 		}
                 	},
                 	error: function(response, status){
                 		console.error("Error while feedback post. Response is: ", response );
                 	}
             	})
+            });
+            $("#yearAsc").click(function() {
+                var movieArray = data.results;
+                movieArray.sort();
             });
 		},
         validateForm: function(){
