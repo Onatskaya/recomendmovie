@@ -60,11 +60,36 @@ $(document).ready(function(){
                 	},
                 	success: function(data, textStatus) {
                 		console.debug("Successful feedback post request. Response is: ", data);
+
+                        $(".friendsRecomendations").html("");
+
                 		var recomandation= data.results;
+
+
+/*Использование библиотеки underscore.js*/
+
+                        var recTemplate = _.template(
+                            '<div class="panel panel-default movie-rec  rec-wrapper"">' +
+                            '<div class="panel-body" data-year="<%= rec.year %>">' +
+                            '<img src="<%= rec.imgUrl %>" alt="Poster" class="poster">' +
+                            '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
+                            '<p class="recYear">Год выпуска: <%= rec.year %></p>' +
+                            '<p><%= rec.description %></p>' +
+                            '<p>Автор рекомендации: <%= rec.autor %></p>' +
+                            '<p>Рекомендация оставлена: <%= moment(rec.createdAt).format("LL") %></p>' +
+                            '</div>'
+                            );
+
                 		for (var i = 0; i < recomandation.length; i++) {
 
+                            var recElement = recTemplate({ rec: recomandation[i]});
 
-                			var movieTitle = $("<h3></h3>");
+                            $(".friendsRecomendations").append(recElement);
+                            $(".rec-wrapper").show("slow");
+
+
+
+                			/*var movieTitle = $("<h3></h3>");
                             var movieGenre = $("<small> </small>");
                             var movieYear = $("<p class='recYear'></p>");
                             var movieDescription = $("<p></p>");
@@ -73,7 +98,7 @@ $(document).ready(function(){
                             var recomendationTime = $("<p></p>");
                             var recomendationCreationTime = recomandation[i].createdAt;
                 			
-                            $(".friendsRecomendations").append('<div class="panel panel-default movie-rec"></div>');
+                            $(".friendsRecomendations").append('<div class="panel panel-default movie-rec  rec-wrapper"></div>');
                             $(".movie-rec:last-child").append('<div class="panel-body"></div>');
 
 
@@ -82,26 +107,35 @@ $(document).ready(function(){
                             movieTitle.html(recomandation[i].title + " (" + recomandation[i].genre + ")");
                             //movieGenre.html(" (" + recomandation[i].genre + ")");
                             movieYear.html("Год выпуска: " + recomandation[i].year);
+                            $(".movie-rec:last-child .panel-body").attr("data-year", recomandation[i].year);
                             movieDescription.html(recomandation[i].description);
                             movieRecomendator.html("Автор рекомендации: " + recomandation[i].postAuthor);
-                            recomendationTime.html("Рекомендация оставлена: " + moment(recomendationCreationTime).format("dddd, MMMM DD YYYY, h:mm:ss a"));
+                            recomendationTime.html("Рекомендация оставлена: " + moment(recomendationCreationTime).format("LL"));
 
                             $(".movie-rec:last-child > .panel-body").append(moviePoster, movieTitle, movieGenre, movieYear, movieDescription, movieRecomendator, recomendationTime);
+                            $(".rec-wrapper").show("slow");*/
                 		};
                         //return recomandation;
                 	},
                 	error: function(response, status){
-                		console.error("Error while feedback post. Response is: ", response );
+                		console.error("Error while getting feedback list. Response is: ", response );
                 	}
             	})
             });
             $(".asc").click(function() {
             	console.log("Sorting movies by year starting");
+                var wrapper = $('.friendsRecomendations .movie-rec');
+                //wrapper.html("");
+                wrapper.find('.panel-body').sort(function(a, b) {
+                     return +a.dataset.year - +b.dataset.year;
+                })
+                .appendTo(wrapper);
 
-                var recomendationsArray = []
+
+                /*var recomendationsArray = []
                 recomendationsArray.push($(".movie-rec .panel-body"));
                 console.log(recomendationsArray);
-
+*/
                 /*for (var i = 0; i<recomendationsArray.length; i++) {
                     var yearArray = [];
                     yearArray.push($(".recYear"));
@@ -222,7 +256,7 @@ $(document).ready(function(){
                 autorInput.parent().find(".help-block").show();
                 autorValidation = false;
             }
-            if (titleValidation == true && genreValidation == true && yearValidation == true && urlValidation == true && autorValidation == true){
+            if (titleValidation && genreValidation && yearValidation && urlValidation && autorValidation){
                 return true;
             } else {
                 return false;
