@@ -66,11 +66,12 @@ $(document).ready(function(){
 
                 			var movieTitle = $("<h3></h3>");
                             var movieGenre = $("<small> </small>");
-                            var movieYear = $("<p></p>");
+                            var movieYear = $("<p class='recYear'></p>");
                             var movieDescription = $("<p></p>");
                             var moviePoster = $('<img src="" alt="Poster" class="poster">');
                             var movieRecomendator = $("<p></p>");
                             var recomendationTime = $("<p></p>");
+                            var recomendationCreationTime = recomandation[i].createdAt;
                 			
                             $(".friendsRecomendations").append('<div class="panel panel-default movie-rec"></div>');
                             $(".movie-rec:last-child").append('<div class="panel-body"></div>');
@@ -83,20 +84,69 @@ $(document).ready(function(){
                             movieYear.html("Год выпуска: " + recomandation[i].year);
                             movieDescription.html(recomandation[i].description);
                             movieRecomendator.html("Автор рекомендации: " + recomandation[i].postAuthor);
-                            recomendationTime.html("Рекомендация оставлена: " + recomandation[i].createdAt);
+                            recomendationTime.html("Рекомендация оставлена: " + moment(recomendationCreationTime).format("dddd, MMMM DD YYYY, h:mm:ss a"));
 
                             $(".movie-rec:last-child > .panel-body").append(moviePoster, movieTitle, movieGenre, movieYear, movieDescription, movieRecomendator, recomendationTime);
-                		}
+                		};
+                        //return recomandation;
                 	},
                 	error: function(response, status){
                 		console.error("Error while feedback post. Response is: ", response );
                 	}
             	})
             });
-            $("#yearAsc").click(function() {
-                var movieArray = data.results;
-                movieArray.sort();
+            $(".asc").click(function() {
+            	console.log("Sorting movies by year starting");
+
+                var recomendationsArray = []
+                recomendationsArray.push($(".movie-rec .panel-body"));
+                console.log(recomendationsArray);
+
+                /*for (var i = 0; i<recomendationsArray.length; i++) {
+                    var yearArray = [];
+                    yearArray.push($(".recYear"));
+                    console.log(yearArray);
+                    yearArray.sort(function(a, b){
+                    return a-b;
+                });
+                }*/
+
+
+                /*var yearObj = {};
+                $.extend(yearObj, $(".movie-rec .panel-body"));
+                console.log(yearObj);*/
+
+                /*yearArray.sort(function(a, b){
+                    return a-b;
+                });
+                $("#sortByYear").removeClass(".asc").addClass("desc");*/
             });
+            /*$(".desc").click(function() {
+                console.log("Sorting movies by year starting");
+                var yearArray;
+                yearArray.sort(function(a, b){
+                    return b-a;
+                });
+                $("#sortByYear").removeClass(".desc").addClass("asc");
+            });
+
+
+            $(".dateAsc").click(function() {
+                console.log("Sorting movies by creation time starting");
+                var yearArray;
+                yearArray.sort(function(a, b){
+                    return a-b;
+                });
+                $("#sortByTime").removeClass(".dateAsc").addClass("dateDesc");
+            });
+            $(".dateDesc").click(function() {
+                console.log("Sorting movies by creation time starting");
+                var yearArray;
+                yearArray.sort(function(a, b){
+                    return b-a;
+                });
+                $("#sortByTime").removeClass(".dateDesc").addClass("dateAsc");
+            });*/
 		},
         validateForm: function(){
             console.log("Performing validation");
@@ -106,7 +156,7 @@ $(document).ready(function(){
             var genreInput = $("#genre");
             var yearInput =  $("#year");
             var urlInput = $("#picture");
-            var autorInput = $("#UserName");
+            var autorInput = $("#userName");
 
             var title = titleInput.val();
             var genre = genreInput.val();
@@ -118,16 +168,20 @@ $(document).ready(function(){
 
             if (title.length > 2) {
                 titleInput.parent().addClass("has-success").removeClass("has-error");
+                titleInput.parent().find(".help-block").hide();
                 titleValidation = true;
             } else {
                 titleInput.parent().addClass("has-error").removeClass("has-success");
+                titleInput.parent().find(".help-block").show();
                 titleValidation = false;
             }  
             if (genre.length > 2) {
                 genreInput.parent().addClass("has-success").removeClass("has-error");
+                genreInput.parent().find(".help-block").hide();
                 genreValidation = true;
             } else {
                 genreInput.parent().addClass("has-error").removeClass("has-success");
+                genreInput.parent().find(".help-block").show();
                 genreValidation = false;
             }
 
@@ -137,36 +191,37 @@ $(document).ready(function(){
 
                 if (year > 1900 && year <= moment().year()){
                 yearInput.parent().addClass("has-success").removeClass("has-error");
+                yearInput.parent().find(".help-block").hide();
                 yearValidation = true;
                 } else {
                     yearInput.parent().addClass("has-error").removeClass("has-success");
+                    yearInput.parent().find(".help-block").show();
                     yearValidation = false;
                 }
             } else {
                 yearInput.parent().addClass("has-error").removeClass("has-success");
+                yearInput.parent().find(".help-block").show();
                 yearValidation = false;
             }
 
             if (imgUrl.substr(0, 8) == "https://" || imgUrl.substr(0, 7) == "http://") {
                 urlInput.parent().addClass("has-success").removeClass("has-error");
+                urlInput.parent().find(".help-block").hide();
                 urlValidation = true;
             } else {
                 urlInput.parent().addClass("has-error").removeClass("has-success");
+                urlInput.parent().find(".help-block").show();
                 urlValidation = false;
             }
             if (autor.length > 2) {
                 autorInput.parent().addClass("has-success").removeClass("has-error");
+                autorInput.parent().find(".help-block").hide();
                 autorValidation = true;
             } else {
                 autorInput.parent().addClass("has-error").removeClass("has-success");
+                autorInput.parent().find(".help-block").show();
                 autorValidation = false;
             }
-
-
-
-
-
-
             if (titleValidation == true && genreValidation == true && yearValidation == true && urlValidation == true && autorValidation == true){
                 return true;
             } else {

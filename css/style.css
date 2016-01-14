@@ -1,6 +1,13 @@
+.friendsRecomendations{
+	height: 450px;
+	overflow-y: auto;
+}
 .btn{
 	display: block;
 	margin: 10px auto;
+}
+.sortingButtons .btn{
+	display: inline-block;
 }
 .poster{
 	display: block;
