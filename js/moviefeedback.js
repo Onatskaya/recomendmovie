@@ -6,13 +6,14 @@ $(document).ready(function(){
 		apiAppId: '8V1SzXwjmJC1BHXqlYXVuD1pPn0Di4FdxGEUY1N7',
         apiJSId: 'Xq9y1XH9TEWai2mC7XwRQdlVdWPILnTXnINwbEBa',
         serverData: [],
+        settings: {
+            autoUpdateInterval: 5000,
+            autoUpdateEnabled: false
+        },
         dataOnScreen: function(serverData){
             $(".friendsRecomendations").html("");
 
-            
-
-
-/*Использование библиотеки underscore.js*/
+            /*Использование библиотеки underscore.js*/
 
             var recTemplate = _.template(
                 '<div class="panel panel-default movie-rec  rec-wrapper">' +
@@ -26,14 +27,46 @@ $(document).ready(function(){
                 '</div>'
                 );
 
-            for (var i = movieFeedback.serverData.length-1; i < movieFeedback.serverData.length; i--) {
+            for (var i = movieFeedback.serverData.results.length-1; i >= 0; i--) {
 
-                var recElement = recTemplate({ rec: movieFeedback.serverData[i]});
+                var recElement = recTemplate({ rec: movieFeedback.serverData.results[i]});
 
                 $(".friendsRecomendations").append(recElement);
                 $(".rec-wrapper").show("slow");
             }
-            //return dataOnScreen;
+        },
+        switchAutoApdate: function(){
+            if(movieFeedback.settings.autoUpdateEnabled) {
+                console.debug("Auto update is enabled. We are going to switch it off.");
+                clearInterval(movieFeedback.settings.intervalId);
+                movieFeedback.settings.autoUpdateEnabled = false;
+            } else {
+                console.debug("Auto update is disabled. We are going to switch it on with interval: " + movieFeedback.settings.autoUpdateInterval);
+                movieFeedback.settings.intervalId =  setInterval(function(){
+                    movieFeedback.getRecomendations(
+                        function(data){
+                            movieFeedback.dataOnScreen(data.results);
+                        })
+                    }, movieFeedback.settings.autoUpdateInterval);
+                movieFeedback.settings.autoUpdateEnabled = true;
+            }
+        },
+        getRecomendations: function(successCallback, errorCallback){
+            $.ajax({
+                url: movieFeedback.apiHost + "/classes/Movie",
+                method: "GET",
+
+                headers: {
+                    "X-Parse-Application-Id": movieFeedback.apiAppId,
+                    "X-Parse-JavaScript-Key": movieFeedback.apiJSId
+                },
+                success: function(data){
+                    movieFeedback.serverData = data;
+                    successCallback(data);
+                } ,
+                error: errorCallback
+                
+            })
         },
 		init: function(){
 			console.log("Movies feedback page initialization started...");
@@ -81,80 +114,40 @@ $(document).ready(function(){
             });
             $("#btn-load-data").click(function(event) {
             	console.info("Going to get some data from API server");
-            	$.ajax({
-            		url: movieFeedback.apiHost + "/classes/Movie",
-                	method: "GET",
+                movieFeedback.getRecomendations(
+                    function(data){
 
-                	headers: {
-                		"X-Parse-Application-Id": movieFeedback.apiAppId,
-                		"X-Parse-JavaScript-Key": movieFeedback.apiJSId
-                	},
-                	success: function(data, textStatus) {
-                		console.debug("Successful feedback post request. Response is: ", data); 
-
-                        movieFeedback.serverData = data.results;
-                            
-                        movieFeedback.dataOnScreen(movieFeedback.serverData);
-
-
-
-                			/*var movieTitle = $("<h3></h3>");
-                            var movieGenre = $("<small> </small>");
-                            var movieYear = $("<p class='recYear'></p>");
-                            var movieDescription = $("<p></p>");
-                            var moviePoster = $('<img src="" alt="Poster" class="poster">');
-                            var movieRecomendator = $("<p></p>");
-                            var recomendationTime = $("<p></p>");
-                            var recomendationCreationTime = recomandation[i].createdAt;
-                			
-                            $(".friendsRecomendations").append('<div class="panel panel-default movie-rec  rec-wrapper"></div>');
-                            $(".movie-rec:last-child").append('<div class="panel-body"></div>');
-
-
-
-                            moviePoster.attr("src", recomandation[i].imgUrl);
-                            movieTitle.html(recomandation[i].title + " (" + recomandation[i].genre + ")");
-                            //movieGenre.html(" (" + recomandation[i].genre + ")");
-                            movieYear.html("Год выпуска: " + recomandation[i].year);
-                            $(".movie-rec:last-child .panel-body").attr("data-year", recomandation[i].year);
-                            movieDescription.html(recomandation[i].description);
-                            movieRecomendator.html("Автор рекомендации: " + recomandation[i].postAuthor);
-                            recomendationTime.html("Рекомендация оставлена: " + moment(recomendationCreationTime).format("LL"));
-
-                            $(".movie-rec:last-child > .panel-body").append(moviePoster, movieTitle, movieGenre, movieYear, movieDescription, movieRecomendator, recomendationTime);
-                            $(".rec-wrapper").show("slow");*/
-                		
-                        //return recomandation;
-                	},
-                	error: function(response, status){
-                		console.error("Error while getting feedback list. Response is: ", response );
-                	}
-            	})
+                        movieFeedback.dataOnScreen(data.results);
+                    },
+                    function(error){
+                        console.error("Error while getting feedback list. Response is: ", response );
+                    }
+                );
             });
 
 
             $(".sortingButtons").on("click", ".asc", function() {
                 console.log("Sorting movies by year starting");
-                movieFeedback.serverData.sort(function(a, b) {
-                    console.log(movieFeedback.serverData);
+                movieFeedback.serverData.results.sort(function(a, b) {
+                    console.log(movieFeedback.serverData.results);
                     $("#sortByYear").removeClass("asc").addClass("desc");
                      return +a.year - +b.year;
                      
                 })
                 $(".friendsRecomendations").html("");
-                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData));
+                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData.results));
                 
             });
             $(".sortingButtons").on("click", ".desc", function() {
                 console.log("Sorting movies by year starting");
-                movieFeedback.serverData.sort(function(a, b) {
-                    console.log(movieFeedback.serverData);
+                movieFeedback.serverData.results.sort(function(a, b) {
+                    console.log(movieFeedback.serverData.results);
                     $("#sortByYear").removeClass("desc").addClass("asc");
                      return +b.year - +a.year;
                      
                 })
                 $(".friendsRecomendations").html("");
-                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData));
+                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData.results));
                 
             });
 
@@ -162,28 +155,31 @@ $(document).ready(function(){
 
             $(".sortingButtons").on("click", ".dateAsc", function() {
                 console.log("Asc sorting movies by creation date starting");
-                movieFeedback.serverData.sort(function(a, b) {
-                    console.log(movieFeedback.serverData);
+                movieFeedback.serverData.results.sort(function(a, b) {
+                    console.log(movieFeedback.serverData.results);
                     $("#sortByTime").removeClass("dateAsc").addClass("dateDesc");
                      return new Date(a.createdAt) - new Date(b.createdAt);
                      
                 })
                 $(".friendsRecomendations").html("");
-                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData));
+                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData.results));
                 
             });
             $(".sortingButtons").on("click", ".dateDesc", function() {
                 console.log("Desc sorting movies by creation date starting");
-                console.log(movieFeedback.serverData);
-                movieFeedback.serverData.sort(function(a, b) {
-                    console.log(movieFeedback.serverData);
+                console.log(movieFeedback.serverData.results);
+                movieFeedback.serverData.results.sort(function(a, b) {
+                    console.log(movieFeedback.serverData.results);
                     $("#sortByTime").removeClass("dateDesc").addClass("dateAsc");
                      return new Date(b.createdAt) - new Date(a.createdAt);
                      
                 })
                 $(".friendsRecomendations").html("");
-                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData));
+                $(".friendsRecomendations").html(movieFeedback.dataOnScreen(movieFeedback.serverData.results));
                 
+            });
+            $("#switchAutoUpdate").change(function(){
+                movieFeedback.switchAutoApdate();
             })
             
 		},
