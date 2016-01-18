@@ -239,7 +239,7 @@ $(document).ready(function(){
                 yearValidation = false;
             }
 
-            if (imgUrl.substr(0, 8) == "https://" || imgUrl.substr(0, 7) == "http://") {
+            if (imgUrl.substr(0, 8) == "https://" || imgUrl.substr(0, 7) == "http://" && imgUrl.substr(-4, 4) == ".jpg" || imgUrl.substr(-4, 4) == ".png" || imgUrl.substr(-4, 4) == ".gif" || imgUrl.substr(-4, 4) == ".svg" ) {
                 urlInput.parent().addClass("has-success").removeClass("has-error");
                 urlInput.parent().find(".help-block").hide();
                 urlValidation = true;
