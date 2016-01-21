@@ -10,13 +10,18 @@ $(document).ready(function(){
             autoUpdateInterval: 5000,
             autoUpdateEnabled: false
         },
+
         dataOnScreen: function(serverData){
-            $(".friendsRecomendations").html("");
+            
+            //_.difference([1, 2, 3, 4, 5], [5, 2, 10]);
+            
+
+            //$(".friendsRecomendations").html("");
 
             /*Использование библиотеки underscore.js*/
 
             var recTemplate = _.template(
-                '<div class="panel panel-default movie-rec  rec-wrapper">' +
+                '<div class="panel panel-default movie-rec  rec-wrapper" id="<%=rec.objectId %>">' +
                 '<div class="panel-body" data-year="<%= rec.year %>">' +
                 '<img src="<%= rec.imgUrl %>" alt="Poster" class="poster">' +
                 '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
@@ -35,6 +40,39 @@ $(document).ready(function(){
                 $(".rec-wrapper").show("slow");
             }
         },
+
+        getExistentRecomendationsId: function() {
+            var existentRecomendations = [];
+            $(".friendsRecomendations .rec-wrapper").each( function(index, elem) {
+                existentRecomendations.push($(elem).attr("id"));
+                });
+            console.log("Existent recomendations array: ", existentRecomendations);
+            return existentRecomendations;
+        },
+
+        getServerRecomendationId: function() {
+            var serverRecomendations = _.pluck(movieFeedback.serverData.results, 'objectId');
+            console.log("Recomendations from server: ", serverRecomendations);
+        },
+
+        getOnlyNewRecomendations: function() {
+            var nealyAddedRecomendations = [];
+            /*nealyAddedRecomendations = _.difference(movieFeedback.getServerRecomendationId, movieFeedback.getExistentRecomendationsId);
+            console.log("New recomendations: ", nealyAddedRecomendations);
+*/
+            var pageElements = [];
+
+            for (var i=0; i<nealyAddedRecomendations.length; i++){
+                _where(movieFeedback.serverData, {objectId: nealyAddedRecomendations[i]})
+                pageElements.push(nealyAddedRecomendations[i]);
+            }
+
+            //var pageElements = _.where(nealyAddedRecomendations, "objectId");
+            console.log(pageElements);
+            return pageElements;
+            //return nealyAddedRecomendations;
+        },
+
         switchAutoApdate: function(){
             if(movieFeedback.settings.autoUpdateEnabled) {
                 console.debug("Auto update is enabled. We are going to switch it off.");
@@ -51,6 +89,7 @@ $(document).ready(function(){
                 movieFeedback.settings.autoUpdateEnabled = true;
             }
         },
+
         getRecomendations: function(successCallback, errorCallback){
             $.ajax({
                 url: movieFeedback.apiHost + "/classes/Movie",
@@ -68,11 +107,14 @@ $(document).ready(function(){
                 
             })
         },
+
 		init: function(){
 			console.log("Movies feedback page initialization started...");
 			movieFeedback.bindEventHandlers();
             console.log(movieFeedback.serverData);
+           
 		},
+
 		bindEventHandlers: function(){
 			$("#submitForm").click(function(event){
 
@@ -118,6 +160,7 @@ $(document).ready(function(){
                     function(data){
 
                         movieFeedback.dataOnScreen(data.results);
+
                     },
                     function(error){
                         console.error("Error while getting feedback list. Response is: ", response );
@@ -125,6 +168,11 @@ $(document).ready(function(){
                 );
             });
 
+            $("#test").click(function() {
+                movieFeedback.getExistentRecomendationsId();
+                movieFeedback.getServerRecomendationId();
+                movieFeedback.getOnlyNewRecomendations();
+            });
 
             $(".sortingButtons").on("click", ".asc", function() {
                 console.log("Sorting movies by year starting");
@@ -183,6 +231,7 @@ $(document).ready(function(){
             })
             
 		},
+
         validateForm: function(){
             console.log("Performing validation");
 
