@@ -48,18 +48,75 @@ $(document).ready(function(){
                 });
             console.log("Existent recomendations array: ", existentRecomendations);
             return existentRecomendations;
+
+            /*console.log("Existent recomendations array: ", [ "NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J"]);
+            return [ "NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J"];*/
         },
 
         getServerRecomendationId: function() {
-            var serverRecomendations = _.pluck(movieFeedback.serverData.results, 'objectId');
-            console.log("Recomendations from server: ", serverRecomendations);
+            movieFeedback.getRecomendations(
+                    function(data){
+                        //movieFeedback.serverData = data.results;
+                        
+                        var serverRecomendations = _.pluck(data.results, 'objectId');
+                            console.log("Recomendations from server: ", serverRecomendations);
+         //return serverRecomendations;
+                        var diff = movieFeedback.comparingIds(movieFeedback.getExistentRecomendationsId(), serverRecomendations);
+
+                        var pageElements = [];
+
+                        for (var i=0; i<diff.length; i++){
+                            var newRecomendation = _.where(data.results, {objectId: diff[i]});
+                            console.log("new rec: ", newRecomendation);
+                            pageElements.push(newRecomendation[0]);
+                        };
+                        console.log("Page Elements: ", pageElements);
+
+                        var recTemplate = _.template(
+                            '<div class="panel panel-default movie-rec  rec-wrapper" id="<%=rec.objectId %>">' +
+                            '<div class="panel-body" data-year="<%= rec.year %>">' +
+                            '<img src="<%= rec.imgUrl %>" alt="Poster" class="poster">' +
+                            '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
+                            '<p class="recYear">Год выпуска: <%= rec.year %></p>' +
+                            '<p><%= rec.description %></p>' +
+                            '<p>Автор рекомендации: <%= rec.autor %></p>' +
+                            '<p>Рекомендация оставлена: <%= moment(rec.createdAt).format("LL") %></p>' +
+                            '</div>'
+                            );
+
+                        for (var i = pageElements.length-1; i >= 0; i--) {
+
+                            var recElement = recTemplate({ rec: pageElements[i]});
+
+                            $(".friendsRecomendations").prepend(recElement);
+                            $(".rec-wrapper").show("slow");
+                        }
+
+
+                    },
+                    function(error){
+                        console.error("Error while getting feedback list. Response is: ", response );
+                    }
+                );
+
+            
+
+            //return ["NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J", "TQsX70O8TO"];
+        },
+        comparingIds: function(existentIds, serverIds) {
+            // var newalyAddedRecomendations = [];
+            newalyAddedRecomendations = _.difference(serverIds, existentIds);
+            // console.log("New recomendations: ", newalyAddedRecomendations);
+            return newalyAddedRecomendations;
+
         },
 
-        getOnlyNewRecomendations: function() {
-            var nealyAddedRecomendations = [];
-            /*nealyAddedRecomendations = _.difference(movieFeedback.getServerRecomendationId, movieFeedback.getExistentRecomendationsId);
-            console.log("New recomendations: ", nealyAddedRecomendations);
-*/
+        /*getOnlyNewRecomendations: function() {
+            
+            var newalyAddedRecomendations = [];
+            newalyAddedRecomendations = _.difference(movieFeedback.getServerRecomendationId, movieFeedback.getExistentRecomendationsId);
+            console.log("New recomendations: ", newalyAddedRecomendations);
+
             var pageElements = [];
 
             for (var i=0; i<nealyAddedRecomendations.length; i++){
@@ -68,8 +125,34 @@ $(document).ready(function(){
             }
 
             //var pageElements = _.where(nealyAddedRecomendations, "objectId");
-            console.log(pageElements);
-            return pageElements;
+            // console.log(pageElements);
+            //return pageElements;
+            //return nealyAddedRecomendations;
+        },*/
+
+        test_function: function() {
+            var serverInfo = {"results":[{"createdAt":"2016-01-11T16:57:13.252Z","description":"","genre":"Фэнтези","imgUrl":"http://www.kinopoisk.ru/images/film_big/4815.jpg","objectId":"NSzYaF4hyb","postAuthor":"Виталий","title":"От заката до рассвета","updatedAt":"2016-01-11T16:57:13.252Z","year":"1995"},{"createdAt":"2016-01-13T09:51:46.276Z","description":"Мечта репортерши стать ведущей программы новостей может быть разрушена. После ночи кутежа она оказывается в дальнем районе Лос-Анджелеса без телефона, автомобиля, паспорта и денег — и у нее остается только 8 часов, чтобы добраться до самого важного собеседования ее жизни.","genre":"Комедия","imgUrl":"http://st.kp.yandex.net/images/film_iphone/iphone360_714408.jpg","objectId":"8JcTeJNYzY","postAuthor":"Надежда","title":"Блондинка в эфире","updatedAt":"2016-01-13T09:51:46.276Z","year":"2014"},{"createdAt":"2016-01-14T14:44:03.515Z","description":"","genre":"lalala","imgUrl":"http://forum.awd.ru/download_fake_non_existing_directory/301986/thumb/30/19/thumb_190488_a484a0942f5d44ad0d693ae5261b7de9.jpg","objectId":"FBzOOjHi6J","postAuthor":"lera","title":"lalala","updatedAt":"2016-01-14T14:44:03.515Z","year":"1987"},{"createdAt":"2016-01-14T15:44:52.501Z","description":"Lorem Ipsum Dolar","genre":"Фентези","imgUrl":"http://kinino.ru/_ld/1/43112539.jpg","objectId":"TQsX70O8TO","post":"Stas","title":"Безумный Макс 4","updatedAt":"2016-01-14T15:44:52.501Z","year":"2015"},{"createdAt":"2016-01-14T16:48:29.627Z","description":"jgh","genre":"fgdhfdh","imgUrl":"http://ya.ru","objectId":"48A3xFm1A0","postAuthor":"ololo","title":"gffndfg","updatedAt":"2016-01-14T16:48:29.627Z","year":"2015"},{"createdAt":"2016-01-16T17:29:39.390Z","description":"","genre":"","imgUrl":"","objectId":"MnqEryFPNf","post":"","title":"","updatedAt":"2016-01-16T17:29:39.390Z","year":""},{"createdAt":"2016-01-17T15:36:11.274Z","description":"gdgfdg","genre":"gggrg","imgUrl":"http://img1.joyreactor.cc/pics/post/anon-%D0%9A%D0%B0%D1%80%D1%82%D0%B8%D0%BD%D0%BA%D0%B0-2191131.jpeg","objectId":"yacdZdIc52","postAuthor":"gdgd","title":"ggdg","updatedAt":"2016-01-17T15:36:11.274Z","year":"1977"},{"createdAt":"2016-01-17T15:41:13.583Z","description":"«Обитель зла» (англ. Resident Evil, японское название Biohazard) — серия фильмов, снятая по сценарию Пола Андерсона, является экранизацией известной компьютерной игры компании Capcom Resident Evil. Главную роль в фильмах исполнила Милла Йовович.","genre":"фантастика боевик ужасы","imgUrl":"https://upload.wikimedia.org/wikipedia/ru/9/9a/Resident_Evil_Poster.jpg","objectId":"n0jY0IY1gv","postAuthor":"Виталий Мартынов","title":"Обитель зла","updatedAt":"2016-01-17T15:41:13.583Z","year":"2002"},{"createdAt":"2016-01-18T15:30:35.374Z","description":"","genre":"титаник","imgUrl":"http://sgolder.com/wp-content/uploads/2015/01/top-sait6.jpg","objectId":"D4NKIyh6Dn","postAuthor":"vallery","title":"титаник","updatedAt":"2016-01-18T15:30:35.374Z","year":"2000"},{"createdAt":"2016-01-18T16:54:59.174Z","description":"cat","genre":" comedy","imgUrl":"https://pbs.twimg.com/profile_images/378800000532546226/dbe5f0727b69487016ffd67a6689e75a.jpeg","objectId":"w4QIWZuxP5","postAuthor":"lera","title":"cat","updatedAt":"2016-01-18T16:54:59.174Z","year":"2015"},{"createdAt":"2016-01-18T17:25:49.309Z","description":"cat","genre":"thriller","imgUrl":"http://i.dailymail.co.uk/i/pix/2014/10/06/1412613364603_wps_17_SANTA_MONICA_CA_AUGUST_04.jpg","objectId":"kIpwRXof05","postAuthor":"lera","title":"cat","updatedAt":"2016-01-18T17:25:49.309Z","year":"2015"},{"createdAt":"2016-01-21T16:39:08.362Z","description":"","genre":"qwqe","imgUrl":"http://forum.awd.ru/download_fake_non_existing_directory/301986/thumb/30/19/thumb_190488_a484a0942f5d44ad0d693ae5261b7de9.jpg","objectId":"vF55dxt8Zh","postAuthor":"lera","title":"cat","updatedAt":"2016-01-21T16:39:08.362Z","year":"1905"},{"createdAt":"2016-01-21T16:45:36.126Z","description":"","genre":"Спорт","imgUrl":"http://kinogo.co/uploads/posts/2013-05/1369090980_never-back-down.jpg","objectId":"k7Pk0gKk8V","post":"Стас","title":"Никогда не сдавайся","updatedAt":"2016-01-21T16:45:36.126Z","year":"2008"},{"createdAt":"2016-01-21T16:54:06.141Z","description":"","genre":"test","imgUrl":"http://www.cruzo.net/user/images/k/dbb025264e7d1a35772dfa4387514de9_172.jpg","objectId":"zu7AHzIqvb","postAuthor":"test","title":"test","updatedAt":"2016-01-21T16:54:06.141Z","year":"1989"}]};
+
+            var films = [ "NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J"];
+
+            var films2 = ["NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J", "TQsX70O8TO"]
+
+            var newAddedRecomendations = [];
+            newAddedRecomendations = _.difference(films2, films);
+            // console.log("New recomendations: ", newAddedRecomendations);
+
+            var elementsForPage = [];
+
+            for (var i=0; i<newAddedRecomendations.length; i++){
+                var test = _.where(serverInfo.results, {objectId: newAddedRecomendations[i]})
+                console.log('test value: ',  test);
+
+                // elementsForPage.push(newAddedRecomendations[i]);
+            }
+
+            //var pageElements = _.where(nealyAddedRecomendations, "objectId");
+            // console.log(elementsForPage);
+            return elementsForPage;
             //return nealyAddedRecomendations;
         },
 
@@ -166,12 +249,14 @@ $(document).ready(function(){
                         console.error("Error while getting feedback list. Response is: ", response );
                     }
                 );
+                $("#test").attr("disabled", false);
             });
 
             $("#test").click(function() {
                 movieFeedback.getExistentRecomendationsId();
                 movieFeedback.getServerRecomendationId();
-                movieFeedback.getOnlyNewRecomendations();
+                /*movieFeedback.getOnlyNewRecomendations();
+                movieFeedback.test_function();*/
             });
 
             $(".sortingButtons").on("click", ".asc", function() {
