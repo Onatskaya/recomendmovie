@@ -5,6 +5,7 @@
 .btn{
 	display: block;
 	margin: 10px auto;
+	padding: 6px 20px;
 }
 .sortingButtons .btn{
 	display: inline-block;
@@ -19,4 +20,12 @@
 }
 .rec-wrapper{
 	display: none;
+}
+.asc,
+.dateAsc{
+	background: url(../arrows1.png) no-repeat center right;
+}
+.desc,
+.dateDesc{
+	background: url(../arrows.png) no-repeat center right;
 }
