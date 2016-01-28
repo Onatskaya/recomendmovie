@@ -18,7 +18,7 @@ $(document).ready(function(){
 		        '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
 		        '<p class="recYear">Год выпуска: <%= rec.year %></p>' +
 		        '<p><%= rec.description %></p>' +
-		        '<p>Автор рекомендации: <%= rec.postAutor %></p>' +
+		        '<p>Автор рекомендации: <%= rec.postAuthor %></p>' +
 		        '<p>Рекомендация оставлена: <%= moment(rec.createdAt).format("LL") %></p>' +
 		        '</div>'
 		    );
