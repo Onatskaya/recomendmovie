@@ -10,6 +10,23 @@ $(document).ready(function(){
             autoUpdateInterval: 15000,
             autoUpdateEnabled: false
         },
+        createElement: function(recObject) {
+			var recTemplate = _.template(
+		        '<div class="panel panel-default movie-rec  rec-wrapper" id="<%=rec.objectId %>">' +
+		        '<div class="panel-body" data-year="<%= rec.year %>">' +
+		        '<img src="<%= rec.imgUrl %>" alt="Poster" class="poster">' +
+		        '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
+		        '<p class="recYear">Год выпуска: <%= rec.year %></p>' +
+		        '<p><%= rec.description %></p>' +
+		        '<p>Автор рекомендации: <%= rec.postAutor %></p>' +
+		        '<p>Рекомендация оставлена: <%= moment(rec.createdAt).format("LL") %></p>' +
+		        '</div>'
+		    );
+
+		    var recElement = recTemplate({ rec: recObject});
+
+		    return recElement;
+		},
 
         /*функция подготавливает html-структуру и выводит полученные данные на экран*/
         dataOnScreen: function(serverData){          
@@ -18,23 +35,11 @@ $(document).ready(function(){
 
             /*Использование библиотеки underscore.js*/
 
-            var recTemplate = _.template(
-                '<div class="panel panel-default movie-rec  rec-wrapper" id="<%=rec.objectId %>">' +
-                '<div class="panel-body" data-year="<%= rec.year %>">' +
-                '<img src="<%= rec.imgUrl %>" alt="Poster" class="poster">' +
-                '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
-                '<p class="recYear">Год выпуска: <%= rec.year %></p>' +
-                '<p><%= rec.description %></p>' +
-                '<p>Автор рекомендации: <%= rec.postAuthor %></p>' +
-                '<p>Рекомендация оставлена: <%= moment(rec.createdAt).format("LL") %></p>' +
-                '</div>'
-                );
-
             for (var i = movieFeedback.serverData.results.length-1; i >= 0; i--) {
 
-                var recElement = recTemplate({ rec: movieFeedback.serverData.results[i]});
+                movieFeedback.createElement(movieFeedback.serverData.results[i]);
 
-                $(".friendsRecomendations").append(recElement);
+                $(".friendsRecomendations").append(movieFeedback.createElement(movieFeedback.serverData.results[i]));
                 $(".rec-wrapper").show("slow");
             }
         },
@@ -48,8 +53,6 @@ $(document).ready(function(){
             console.log("Existent recomendations array: ", existentRecomendations);
             return existentRecomendations;
 
-            /*console.log("Existent recomendations array: ", [ "NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J"]);
-            return [ "NSzYaF4hyb", "8JcTeJNYzY", "FBzOOjHi6J"];*/
         },
 
         /*метод посылает ajax-запрос на сервер, получает ответ, выводит на страницу вновь добавленные рекомендации над уже существующими*/
@@ -60,7 +63,7 @@ $(document).ready(function(){
                         
                         var serverRecomendations = _.pluck(data.results, 'objectId');
                             console.log("Recomendations from server: ", serverRecomendations);
-         //return serverRecomendations;
+        				 //return serverRecomendations;
                         var diff = movieFeedback.comparingIds(movieFeedback.getExistentRecomendationsId(), serverRecomendations);
 
                         var pageElements = [];
@@ -72,23 +75,11 @@ $(document).ready(function(){
                         };
                         console.log("Page Elements: ", pageElements);
 
-                        var recTemplate = _.template(
-                            '<div class="panel panel-default movie-rec  rec-wrapper" id="<%=rec.objectId %>">' +
-                            '<div class="panel-body" data-year="<%= rec.year %>">' +
-                            '<img src="<%= rec.imgUrl %>" alt="Poster" class="poster">' +
-                            '<h3><%= rec.title %><small> <%= rec.genre %></small></h3>' +
-                            '<p class="recYear">Год выпуска: <%= rec.year %></p>' +
-                            '<p><%= rec.description %></p>' +
-                            '<p>Автор рекомендации: <%= rec.postAuthor %></p>' +
-                            '<p>Рекомендация оставлена: <%= moment(rec.createdAt).format("LL") %></p>' +
-                            '</div>'
-                            );
-
                         for (var i = pageElements.length-1; i >= 0; i--) {
 
-                            var recElement = recTemplate({ rec: pageElements[i]});
+                            movieFeedback.createElement(pageElements[i]);
 
-                            $(".friendsRecomendations").prepend(recElement);
+                            $(".friendsRecomendations").prepend(movieFeedback.createElement(pageElements[i]));
                             $(".rec-wrapper").show("slow");
                         }
 
@@ -147,15 +138,6 @@ $(document).ready(function(){
                 movieFeedback.settings.autoUpdateEnabled = false;
             } else {
                 console.debug("Auto update is disabled. We are going to switch it on with interval: " + movieFeedback.settings.autoUpdateInterval);
-                /*movieFeedback.settings.intervalId =  setInterval(function(){
-                    movieFeedback.getRecomendations(
-                        function(data){
-                            movieFeedback.dataOnScreen(data.results);
-                        })
-                
-                    }, movieFeedback.settings.autoUpdateInterval);
-                movieFeedback.settings.autoUpdateEnabled = true;*/
-
                 movieFeedback.settings.intervalId =  setInterval( movieFeedback.getServerRecomendationId(), movieFeedback.settings.autoUpdateInterval);
                 $("#test").attr("disabled", false);
                 movieFeedback.settings.autoUpdateEnabled = true;
